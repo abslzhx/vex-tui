@@ -7,6 +7,7 @@ import (
 	"github.com/CodeOne45/vex-tui/internal/theme"
 	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/mattn/go-runewidth"
 )
 
 const (
@@ -166,13 +167,7 @@ func ColIndexToLetter(index int) string {
 
 // Truncate truncates a string to maxLen with ellipsis
 func Truncate(s string, maxLen int) string {
-	if len(s) <= maxLen {
-		return s
-	}
-	if maxLen <= 3 {
-		return s[:maxLen]
-	}
-	return s[:maxLen-3] + "..."
+	return runewidth.Truncate(s, maxLen, "...")
 }
 
 // TruncateToWidth ensures text fits exactly in the cell width
@@ -182,18 +177,25 @@ func TruncateToWidth(s string, width int) string {
 	s = strings.ReplaceAll(s, "\t", " ")
 	s = strings.ReplaceAll(s, "\r", " ")
 
-	runes := []rune(s)
+	w := runewidth.StringWidth(s)
 
-	if len(runes) > width {
+	var result string
+	if w > width {
 		if width <= 3 {
-			return strings.Repeat(".", width)
+			result = strings.Repeat(".", width)
+		} else {
+			result = runewidth.Truncate(s, width, "...")
 		}
-		return string(runes[:width-3]) + "..."
-	} else if len(runes) < width {
-		return s + strings.Repeat(" ", width-len(runes))
+	} else {
+		result = s
 	}
 
-	return s
+	rw := runewidth.StringWidth(result)
+	if rw < width {
+		result += strings.Repeat(" ", width-rw)
+	}
+
+	return result
 }
 
 // PadCenter centers text in a field of given width

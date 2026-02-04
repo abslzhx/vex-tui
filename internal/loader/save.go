@@ -11,18 +11,40 @@ import (
 
 // SaveExcel saves sheets to an Excel file
 func SaveExcel(sheets []models.Sheet, filename string) error {
-	f := excelize.NewFile()
+	var f *excelize.File
+	var err error
+
+	// Try to open existing file to preserve formatting
+	if _, statErr := os.Stat(filename); statErr == nil {
+		f, err = excelize.OpenFile(filename)
+	}
+
+	// If file doesn't exist or can't be opened, create new
+	if f == nil || err != nil {
+		f = excelize.NewFile()
+		// Only rename Sheet1 for new files
+		if len(sheets) > 0 {
+			f.SetSheetName("Sheet1", sheets[0].Name)
+		}
+	}
+
 	defer func() {
 		if err := f.Close(); err != nil {
 			fmt.Fprintf(os.Stderr, "warning: failed to close file: %v\n", err)
 		}
 	}()
 
-	for idx, sheet := range sheets {
+	for _, sheet := range sheets {
 		sheetName := sheet.Name
-		if idx == 0 {
-			f.SetSheetName("Sheet1", sheetName)
-		} else {
+
+		// Check if sheet exists
+		idx, err := f.GetSheetIndex(sheetName)
+		if err != nil {
+			// If error occurs (e.g. invalid name), assume we might need to create it or skip
+			idx = -1
+		}
+
+		if idx == -1 {
 			_, err := f.NewSheet(sheetName)
 			if err != nil {
 				return fmt.Errorf("failed to create sheet %s: %w", sheetName, err)

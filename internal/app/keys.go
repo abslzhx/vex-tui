@@ -10,8 +10,8 @@ type KeyMap struct {
 	Right        key.Binding
 	PageUp       key.Binding
 	PageDown     key.Binding
-	Home         key.Binding
-	End          key.Binding
+	FirstRow     key.Binding
+	LastRow      key.Binding
 	FirstCol     key.Binding
 	LastCol      key.Binding
 	NextSheet    key.Binding
@@ -56,8 +56,8 @@ func (k KeyMap) ShortHelp() []key.Binding {
 func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down, k.Left, k.Right},
-		{k.PageUp, k.PageDown, k.FirstCol, k.LastCol},
-		{k.Home, k.End, k.NextSheet, k.PrevSheet},
+		{k.PageUp, k.PageDown, k.FirstRow, k.LastRow},
+		{k.FirstCol, k.LastCol, k.NextSheet, k.PrevSheet},
 		{k.Edit, k.Delete, k.Copy, k.Paste},
 		{k.InsertRow, k.InsertCol, k.DeleteRow, k.DeleteCol},
 		{k.FillDown, k.FillRight, k.ApplyFormula, k.ToggleForm},
@@ -77,10 +77,10 @@ func DefaultKeyMap() KeyMap {
 		Right:        key.NewBinding(key.WithKeys("right", "l"), key.WithHelp("→/l", "right")),
 		PageUp:       key.NewBinding(key.WithKeys("pgup", "ctrl+u"), key.WithHelp("pgup/^u", "page up")),
 		PageDown:     key.NewBinding(key.WithKeys("pgdown", "ctrl+d"), key.WithHelp("pgdn/^d", "page down")),
-		Home:         key.NewBinding(key.WithKeys("home", "0"), key.WithHelp("home/0", "row start")),
-		End:          key.NewBinding(key.WithKeys("end", "$"), key.WithHelp("end/$", "row end")),
-		FirstCol:     key.NewBinding(key.WithKeys("g"), key.WithHelp("g", "first col")),
-		LastCol:      key.NewBinding(key.WithKeys("G"), key.WithHelp("G", "last col")),
+		FirstRow:     key.NewBinding(key.WithKeys("g"), key.WithHelp("g", "first row")),
+		LastRow:      key.NewBinding(key.WithKeys("G"), key.WithHelp("G", "last row")),
+		FirstCol:     key.NewBinding(key.WithKeys("0"), key.WithHelp("0", "first col")),
+		LastCol:      key.NewBinding(key.WithKeys("$"), key.WithHelp("$", "last col")),
 		NextSheet:    key.NewBinding(key.WithKeys("tab"), key.WithHelp("tab", "next sheet")),
 		PrevSheet:    key.NewBinding(key.WithKeys("shift+tab"), key.WithHelp("⇧tab", "prev sheet")),
 		Search:       key.NewBinding(key.WithKeys("/"), key.WithHelp("/", "search")),

@@ -119,14 +119,14 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.cursorRow = ui.Max(m.cursorRow-visibleRows, 0)
 		m.adjustViewport()
 
-	case key.Matches(msg, m.keys.Home):
+	case key.Matches(msg, m.keys.FirstRow):
 		m.quitConfirm = false
-		m.cursorCol = 0
-		m.offsetCol = 0
+		m.cursorRow = 0
+		m.offsetRow = 0
 
-	case key.Matches(msg, m.keys.End):
+	case key.Matches(msg, m.keys.LastRow):
 		m.quitConfirm = false
-		m.cursorCol = sheet.MaxCols - 1
+		m.cursorRow = sheet.MaxRows - 1
 		m.adjustViewport()
 
 	case key.Matches(msg, m.keys.FirstCol):

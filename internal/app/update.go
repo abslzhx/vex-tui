@@ -573,8 +573,12 @@ func (m *Model) copyCell() {
 	sheet := m.sheets[m.currentSheet]
 	if m.cursorRow < len(sheet.Rows) && m.cursorCol < len(sheet.Rows[m.cursorRow]) {
 		cell := sheet.Rows[m.cursorRow][m.cursorCol]
+
+		// Save to internal clipboard to preserve formatting and formulas
+		m.rowClipboard = []models.Cell{cell}
+
 		value := cell.Value
-		if m.showFormulas && cell.Formula != "" {
+		if cell.Formula != "" {
 			value = "=" + cell.Formula
 		}
 		if err := clipboard.WriteAll(value); err != nil {
@@ -593,16 +597,25 @@ func (m *Model) copyRow() {
 	sheet := m.sheets[m.currentSheet]
 	if m.cursorRow < len(sheet.Rows) {
 		row := sheet.Rows[m.cursorRow]
+
+		// Save to internal clipboard to preserve formatting and formulas
+		m.rowClipboard = make([]models.Cell, len(row))
+		copy(m.rowClipboard, row)
+
 		values := make([]string, 0, len(row))
 		for _, cell := range row {
-			values = append(values, cell.Value)
+			val := cell.Value
+			if cell.Formula != "" {
+				val = "=" + cell.Formula
+			}
+			values = append(values, val)
 		}
 		rowText := strings.Join(values, "\t")
 		if err := clipboard.WriteAll(rowText); err != nil {
 			m.status = models.StatusMsg{Message: "Failed to copy row", Type: models.StatusError}
 		} else {
 			m.status = models.StatusMsg{
-				Message: fmt.Sprintf("Copied row %d (%d cells)", m.cursorRow+1, len(values)),
+				Message: fmt.Sprintf("Copied row %d (%d cells with formatting)", m.cursorRow+1, len(values)),
 				Type:    models.StatusSuccess,
 			}
 		}

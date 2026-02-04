@@ -42,10 +42,11 @@ type Model struct {
 	isSelecting bool
 
 	// Edit mode
-	isEditing   bool
-	modified    bool
-	fileFormat  string
-	quitConfirm bool
+	isEditing    bool
+	modified     bool
+	fileFormat   string
+	quitConfirm  bool
+	rowClipboard []models.Cell
 }
 
 // NewModel creates a new application model

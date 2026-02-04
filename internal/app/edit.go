@@ -291,6 +291,15 @@ func (m *Model) pasteCell() {
 				cell.Value = cellValue
 				cell.Formula = ""
 			}
+
+			// Restore style if available from internal clipboard
+			if len(m.rowClipboard) > 0 {
+				if len(m.rowClipboard) > 1 && colOffset < len(m.rowClipboard) {
+					cell.StyleID = m.rowClipboard[colOffset].StyleID
+				} else if len(m.rowClipboard) == 1 && rowOffset == 0 && colOffset == 0 {
+					cell.StyleID = m.rowClipboard[0].StyleID
+				}
+			}
 		}
 	}
 

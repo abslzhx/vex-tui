@@ -4,6 +4,7 @@ package models
 type Cell struct {
 	Value   string
 	Formula string
+	StyleID int
 	Row     int
 	Col     int
 }

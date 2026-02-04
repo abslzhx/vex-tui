@@ -81,6 +81,11 @@ func SaveExcel(sheets []models.Sheet, filename string) error {
 						continue
 					}
 				}
+
+				// Restore cell style
+				if cell.StyleID != 0 {
+					_ = f.SetCellStyle(sheetName, cellRef, cellRef, cell.StyleID)
+				}
 			}
 		}
 	}

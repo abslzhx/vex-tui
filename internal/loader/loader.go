@@ -69,9 +69,13 @@ func loadExcel(filename string) ([]models.Sheet, error) {
 				// Try to get formula (ignore error as not all cells have formulas)
 				formula, _ := f.GetCellFormula(sheetName, cellRef)
 
+				// Get cell style
+				styleID, _ := f.GetCellStyle(sheetName, cellRef)
+
 				cell := models.Cell{
 					Value:   cellValue,
 					Formula: formula,
+					StyleID: styleID,
 					Row:     rowIdx,
 					Col:     colIdx,
 				}

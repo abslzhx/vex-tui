@@ -37,6 +37,8 @@ type KeyMap struct {
 	DeleteCol    key.Binding
 	InsertRow    key.Binding
 	InsertCol    key.Binding
+	AppendRow    key.Binding
+	AppendCol    key.Binding
 	Paste        key.Binding
 	Save         key.Binding
 	SaveAs       key.Binding
@@ -59,7 +61,7 @@ func (k KeyMap) FullHelp() [][]key.Binding {
 		{k.PageUp, k.PageDown, k.FirstRow, k.LastRow},
 		{k.FirstCol, k.LastCol, k.NextSheet, k.PrevSheet},
 		{k.Edit, k.Delete, k.Copy, k.Paste},
-		{k.InsertRow, k.InsertCol, k.DeleteRow, k.DeleteCol},
+		{k.InsertRow, k.InsertCol, k.AppendRow, k.AppendCol, k.DeleteRow, k.DeleteCol},
 		{k.FillDown, k.FillRight, k.ApplyFormula, k.ToggleForm},
 		{k.Search, k.NextResult, k.PrevResult, k.ClearSearch},
 		{k.Detail, k.Jump, k.Export, k.Theme},
@@ -102,8 +104,10 @@ func DefaultKeyMap() KeyMap {
 		Delete:       key.NewBinding(key.WithKeys("x"), key.WithHelp("x", "delete cell")),
 		DeleteRow:    key.NewBinding(key.WithKeys("d", "d"), key.WithHelp("dd", "delete row")),
 		DeleteCol:    key.NewBinding(key.WithKeys("d", "c"), key.WithHelp("dc", "delete col")),
-		InsertRow:    key.NewBinding(key.WithKeys("o"), key.WithHelp("o", "insert row")),
-		InsertCol:    key.NewBinding(key.WithKeys("O"), key.WithHelp("O", "insert col")),
+		InsertRow:    key.NewBinding(key.WithKeys("o"), key.WithHelp("o", "insert row before")),
+		InsertCol:    key.NewBinding(key.WithKeys("O"), key.WithHelp("O", "insert col before")),
+		AppendRow:    key.NewBinding(key.WithKeys("a"), key.WithHelp("a", "append row after")),
+		AppendCol:    key.NewBinding(key.WithKeys("A"), key.WithHelp("A", "append col after")),
 		Paste:        key.NewBinding(key.WithKeys("p"), key.WithHelp("p", "paste")),
 		Save:         key.NewBinding(key.WithKeys("ctrl+s"), key.WithHelp("^s", "save")),
 		SaveAs:       key.NewBinding(key.WithKeys("ctrl+shift+s"), key.WithHelp("^⇧s", "save as")),

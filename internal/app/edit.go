@@ -216,6 +216,39 @@ func (m *Model) insertRow() {
 	}
 }
 
+// appendRow inserts a new row after current position
+func (m *Model) appendRow() {
+	sheet := &m.sheets[m.currentSheet]
+	targetRow := m.cursorRow + 1
+
+	newRow := make([]models.Cell, sheet.MaxCols)
+	for i := range newRow {
+		newRow[i] = models.Cell{Row: targetRow, Col: i}
+	}
+
+	if targetRow >= len(sheet.Rows) {
+		sheet.Rows = append(sheet.Rows, newRow)
+	} else {
+		sheet.Rows = append(sheet.Rows[:targetRow], append([][]models.Cell{newRow}, sheet.Rows[targetRow:]...)...)
+	}
+	sheet.MaxRows = len(sheet.Rows)
+
+	for i := targetRow + 1; i < len(sheet.Rows); i++ {
+		for j := range sheet.Rows[i] {
+			sheet.Rows[i][j].Row = i
+		}
+	}
+
+	m.cursorRow = targetRow
+	m.adjustViewport()
+	m.modified = true
+	m.recalculateFormulas()
+	m.status = models.StatusMsg{
+		Message: fmt.Sprintf("Row appended at %d", m.cursorRow+1),
+		Type:    models.StatusSuccess,
+	}
+}
+
 // insertColumn inserts a new column at current position
 func (m *Model) insertColumn() {
 	sheet := &m.sheets[m.currentSheet]
@@ -232,6 +265,34 @@ func (m *Model) insertColumn() {
 	m.recalculateFormulas()
 	m.status = models.StatusMsg{
 		Message: fmt.Sprintf("Column inserted at %s", ui.ColIndexToLetter(m.cursorCol)),
+		Type:    models.StatusSuccess,
+	}
+}
+
+// appendColumn inserts a new column after current position
+func (m *Model) appendColumn() {
+	sheet := &m.sheets[m.currentSheet]
+	targetCol := m.cursorCol + 1
+
+	for i := range sheet.Rows {
+		newCell := models.Cell{Row: i, Col: targetCol}
+		if targetCol >= len(sheet.Rows[i]) {
+			sheet.Rows[i] = append(sheet.Rows[i], newCell)
+		} else {
+			sheet.Rows[i] = append(sheet.Rows[i][:targetCol], append([]models.Cell{newCell}, sheet.Rows[i][targetCol:]...)...)
+		}
+
+		for j := targetCol + 1; j < len(sheet.Rows[i]); j++ {
+			sheet.Rows[i][j].Col = j
+		}
+	}
+	sheet.MaxCols++
+	m.cursorCol = targetCol
+	m.adjustViewport()
+	m.modified = true
+	m.recalculateFormulas()
+	m.status = models.StatusMsg{
+		Message: fmt.Sprintf("Column appended at %s", ui.ColIndexToLetter(m.cursorCol)),
 		Type:    models.StatusSuccess,
 	}
 }

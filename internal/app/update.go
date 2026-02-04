@@ -299,6 +299,14 @@ func (m Model) updateNormal(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.quitConfirm = false
 		m.insertColumn()
 
+	case key.Matches(msg, m.keys.AppendRow):
+		m.quitConfirm = false
+		m.appendRow()
+
+	case key.Matches(msg, m.keys.AppendCol):
+		m.quitConfirm = false
+		m.appendColumn()
+
 	case key.Matches(msg, m.keys.Paste):
 		m.quitConfirm = false
 		m.pasteCell()

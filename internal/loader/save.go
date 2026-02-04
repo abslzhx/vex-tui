@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/CodeOne45/vex-tui/pkg/models"
 	"github.com/xuri/excelize/v2"
@@ -58,14 +59,25 @@ func SaveExcel(sheets []models.Sheet, filename string) error {
 					continue
 				}
 
+				// Try to parse value as number if it looks like one, but preserve leading zeros for IDs etc.
+				var val interface{} = cell.Value
+				if num, err := strconv.ParseFloat(cell.Value, 64); err == nil {
+					// Check for leading zeros (e.g. "0123") which should stay as text
+					// Exception: "0", "0.xxx"
+					isLeadingZero := len(cell.Value) > 1 && cell.Value[0] == '0' && cell.Value[1] != '.'
+					if !isLeadingZero {
+						val = num
+					}
+				}
+
 				if cell.Formula != "" {
 					if err := f.SetCellFormula(sheetName, cellRef, cell.Formula); err != nil {
-						if err := f.SetCellValue(sheetName, cellRef, cell.Value); err != nil {
+						if err := f.SetCellValue(sheetName, cellRef, val); err != nil {
 							continue
 						}
 					}
 				} else {
-					if err := f.SetCellValue(sheetName, cellRef, cell.Value); err != nil {
+					if err := f.SetCellValue(sheetName, cellRef, val); err != nil {
 						continue
 					}
 				}
